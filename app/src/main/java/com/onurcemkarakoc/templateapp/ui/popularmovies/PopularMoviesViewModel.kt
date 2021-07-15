@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
-import com.onurcemkarakoc.templateapp.data.models.PopularMoviesResponse
+import com.onurcemkarakoc.templateapp.data.models.MoviesResponse
 import com.onurcemkarakoc.templateapp.data.repository.MoviesRepository
 import com.onurcemkarakoc.templateapp.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +18,7 @@ class PopularMoviesViewModel @Inject constructor(repository: MoviesRepository) :
         repository.getPopularMovies(page)
     }
 
-    val popularMoviesResponse: LiveData<Resource<PopularMoviesResponse>> = _popularMovies
+    val popularMoviesResponse: LiveData<Resource<MoviesResponse>> = _popularMovies
 
 
     fun start(page: Int) {

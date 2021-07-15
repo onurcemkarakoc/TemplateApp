@@ -4,43 +4,78 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.onurcemkarakoc.templateapp.R
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.onurcemkarakoc.templateapp.databinding.FragmentPopularMoviesBinding
+import com.onurcemkarakoc.templateapp.ui.MainActivity
+import com.onurcemkarakoc.templateapp.ui.adapters.MoviesAdapter
+import com.onurcemkarakoc.templateapp.ui.moviedetail.MovieDetailFragment
 import com.onurcemkarakoc.templateapp.utils.Resource
+import com.onurcemkarakoc.templateapp.utils.SpacesItemDecoration
+import dagger.hilt.android.AndroidEntryPoint
 
-class PopularMoviesFragment : Fragment() {
+@AndroidEntryPoint
+class PopularMoviesFragment : Fragment(), MoviesAdapter.MovieItemListener {
     private val popularMoviesViewModel: PopularMoviesViewModel by viewModels()
+    private var binding: FragmentPopularMoviesBinding? = null
+    private lateinit var adapter: MoviesAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_popular_movies, container, false)
+        binding = FragmentPopularMoviesBinding.inflate(inflater)
+        return binding!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        popularMoviesViewModel.start(1)
+        setupRecyclerView()
         setupObservers()
+    }
+
+    private fun setupRecyclerView() {
+        adapter = MoviesAdapter(this)
+        val layoutManager = object : GridLayoutManager(context, 2, VERTICAL, false) {
+            override fun checkLayoutParams(lp: RecyclerView.LayoutParams): Boolean {
+                lp.width = (width / spanCount) - 32
+                lp.height = ((width / spanCount) * 3 / 2) - 32
+                return true
+            }
+        }
+        binding?.popularRc?.layoutManager = layoutManager
+        binding?.popularRc?.addItemDecoration(SpacesItemDecoration(2, 8f, 8f, 8f, 8f))
+        binding?.popularRc?.adapter = adapter
+
     }
 
     private fun setupObservers() {
         popularMoviesViewModel.popularMoviesResponse.observe(viewLifecycleOwner) {
             when (it.status) {
                 Resource.Status.SUCCESS -> {
-
-                    Toast.makeText(activity, it.data!!.page, Toast.LENGTH_SHORT).show()
-//                    bindCharacter(it.data!!)
-//                    binding.progressBar.visibility = View.GONE
-//                    binding.characterCl.visibility = View.VISIBLE
+                    it.data?.let { response ->
+                        if (response.results.isNotEmpty())
+                            adapter.setItems(response.results)
+                    }
+                    binding?.loadingPb?.visibility = View.GONE
+                    binding?.wrongTv?.visibility = View.GONE
+                    binding?.popularRc?.visibility = View.VISIBLE
                 }
 
-                Resource.Status.ERROR ->
-                    Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                Resource.Status.ERROR -> {
+                    binding?.loadingPb?.visibility = View.GONE
+                    binding?.wrongTv?.visibility = View.VISIBLE
+                    binding?.popularRc?.visibility = View.GONE
+
+                    binding?.wrongTv?.text = it.message
+                }
 
                 Resource.Status.LOADING -> {
-                    Toast.makeText(activity, "Loading", Toast.LENGTH_SHORT).show()
+                    binding?.loadingPb?.visibility = View.VISIBLE
+                    binding?.wrongTv?.visibility = View.GONE
+                    binding?.popularRc?.visibility = View.GONE
                 }
             }
         }
@@ -50,5 +85,14 @@ class PopularMoviesFragment : Fragment() {
         @JvmStatic
         fun newInstance() =
             PopularMoviesFragment()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
+
+    override fun onClickedMovie(movieId: Double) {
+        (activity as MainActivity).navigator.start(MovieDetailFragment.newInstance(movieId))
     }
 }

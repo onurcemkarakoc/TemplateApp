@@ -2,4 +2,7 @@
     <string name="app_name">TemplateApp</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_popular">Popular</string>
+    <string name="title_top_rated">Top Rated</string>
+    <string name="homepage">HomePage</string>
 </resources>

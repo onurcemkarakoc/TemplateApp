@@ -1,6 +1,6 @@
 package com.onurcemkarakoc.templateapp.data.models
 
-data class PopularMoviesResponse(
+data class MoviesResponse(
     val page: Int,
     val results: List<Result>,
     val total_pages: Int,

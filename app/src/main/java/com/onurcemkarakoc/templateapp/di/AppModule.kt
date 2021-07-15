@@ -11,8 +11,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import timber.log.Timber
 import javax.inject.Singleton
 
 @Module
@@ -27,13 +29,16 @@ object AppModule {
         .build()
 
     @Provides
-    fun provideClient(): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor {
-            it.proceed(
-                it.request().newBuilder().addHeader("api_key", BuildConfig.API_KEY).build()
-            )
+    fun provideClient(): OkHttpClient {
+        val builder = OkHttpClient.Builder()
+        if (BuildConfig.DEBUG) {
+            val loggingInterceptor =
+                HttpLoggingInterceptor { Timber.e("HttpLoggingInterceptor > $it") }
+            loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+            builder.addInterceptor(loggingInterceptor)
         }
-        .build()
+        return builder.build()
+    }
 
     @Provides
     fun provideGson(): Gson = GsonBuilder().create()
