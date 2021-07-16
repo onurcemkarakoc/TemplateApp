@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity(), Navigator.NavigatorListener {
                 0, true, NavigatorTransaction.SHOW_HIDE
             )
         )
+
     private val mOnNavigationItemSelectedListener =
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
             when (item.itemId) {
@@ -70,4 +71,10 @@ class MainActivity : AppCompatActivity(), Navigator.NavigatorListener {
             1 -> binding.navigation.selectedItemId = R.id.navigation_top_rated
         }
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        navigator.onSaveInstanceState(outState)
+        super.onSaveInstanceState(outState)
+    }
+
 }
