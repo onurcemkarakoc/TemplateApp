@@ -15,16 +15,19 @@ class MoviesViewHolder(
 ) :
     RecyclerView.ViewHolder(binding.root) {
     private lateinit var result: Result
-    fun bind(result: Result) {
-        this.result = result
-        Glide.with(binding.root)
-            .load(BuildConfig.IMAGE_BASE_URL + Constants.W500 + result.poster_path)
-            .placeholder(R.drawable.ic_baseline_fireplace_24)
-            .fitCenter()
-            .into(binding.movieItemImg)
-        binding.root.setOnClickListener {
-            listener.onClickedMovie(result.id)
+    fun bind(result: Result?) {
+        result?.let {
+            this.result = result
+            Glide.with(binding.root)
+                .load(BuildConfig.IMAGE_BASE_URL + Constants.W500 + result.poster_path)
+                .placeholder(R.drawable.ic_baseline_fireplace_24)
+                .fitCenter()
+                .into(binding.movieItemImg)
+            binding.root.setOnClickListener {
+                listener.onClickedMovie(result.id)
+            }
         }
+
     }
 
 }

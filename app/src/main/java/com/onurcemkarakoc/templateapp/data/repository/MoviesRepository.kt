@@ -1,20 +1,37 @@
 package com.onurcemkarakoc.templateapp.data.repository
 
-import com.onurcemkarakoc.templateapp.data.remote.MoviesDataSource
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import com.onurcemkarakoc.templateapp.data.remote.PopularMoviesDataSource
+import com.onurcemkarakoc.templateapp.data.remote.TopRatedMoviesDataSource
 import com.onurcemkarakoc.templateapp.utils.performGetOperation
 import javax.inject.Inject
 
-class MoviesRepository @Inject constructor(private val dataSource: MoviesDataSource) {
+class MoviesRepository @Inject constructor(
+    private val dataSourcePopular: PopularMoviesDataSource,
+    private val dataSourceTopRated: TopRatedMoviesDataSource
+) {
 
-    fun getPopularMovies(page: Int) = performGetOperation {
-        dataSource.getPopularMovies(page)
-    }
+    fun getPopularMovies() =
+        Pager(
+            config = PagingConfig(
+                pageSize = 20,
+                maxSize = 10000
 
-    fun getTopRatedMovies(page: Int) = performGetOperation {
-        dataSource.getTopRatedMovies(page)
-    }
+            ),
+            pagingSourceFactory = { dataSourcePopular }
+        )
+
+    fun getTopRatedMovies() = Pager(
+        config = PagingConfig(
+            pageSize = 20,
+            maxSize = 10000
+
+        ),
+        pagingSourceFactory = { dataSourceTopRated }
+    )
 
     fun getMovieDetail(movie_id: Double) = performGetOperation {
-        dataSource.getMovieDetail(movie_id)
+        dataSourcePopular.getMovieDetail(movie_id)
     }
 }

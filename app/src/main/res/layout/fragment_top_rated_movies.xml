@@ -24,7 +24,7 @@
         android:indeterminate="true" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/popular_rc"
+        android:id="@+id/top_rated_rc"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"

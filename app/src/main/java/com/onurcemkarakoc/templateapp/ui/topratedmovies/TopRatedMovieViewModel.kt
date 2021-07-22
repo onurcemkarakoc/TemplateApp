@@ -1,12 +1,11 @@
 package com.onurcemkarakoc.templateapp.ui.topratedmovies
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.switchMap
-import com.onurcemkarakoc.templateapp.data.models.MoviesResponse
+import androidx.lifecycle.*
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.liveData
+import com.onurcemkarakoc.templateapp.data.models.Result
 import com.onurcemkarakoc.templateapp.data.repository.MoviesRepository
-import com.onurcemkarakoc.templateapp.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -15,10 +14,10 @@ class TopRatedMovieViewModel @Inject constructor(repository: MoviesRepository) :
     private val _page = MutableLiveData<Int>()
 
     private val _topRatedMovies = _page.switchMap { page ->
-        repository.getTopRatedMovies(page)
+        repository.getTopRatedMovies().liveData.cachedIn(viewModelScope)
     }
 
-    val topRatedMoviesResponse: LiveData<Resource<MoviesResponse>> = _topRatedMovies
+    val topRatedMoviesResponse: LiveData<PagingData<Result>> = _topRatedMovies
 
 
     fun start(page: Int) {

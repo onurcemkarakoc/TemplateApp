@@ -4,7 +4,8 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.onurcemkarakoc.templateapp.BuildConfig
 import com.onurcemkarakoc.templateapp.data.remote.ApiService
-import com.onurcemkarakoc.templateapp.data.remote.MoviesDataSource
+import com.onurcemkarakoc.templateapp.data.remote.PopularMoviesDataSource
+import com.onurcemkarakoc.templateapp.data.remote.TopRatedMoviesDataSource
 import com.onurcemkarakoc.templateapp.data.repository.MoviesRepository
 import dagger.Module
 import dagger.Provides
@@ -49,10 +50,18 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideMoviesDataSource(apiService: ApiService) = MoviesDataSource(apiService)
+    fun providePopularMoviesDataSource(apiService: ApiService) = PopularMoviesDataSource(apiService)
 
     @Singleton
     @Provides
-    fun provideMoviesRepository(dataSource: MoviesDataSource) = MoviesRepository(dataSource)
+    fun provideTopRatedMoviesDataSource(apiService: ApiService) =
+        TopRatedMoviesDataSource(apiService)
+
+    @Singleton
+    @Provides
+    fun provideMoviesRepository(
+        dataSourcePopular: PopularMoviesDataSource,
+        dataSourceTopRated: TopRatedMoviesDataSource
+    ) = MoviesRepository(dataSourcePopular, dataSourceTopRated)
 
 }
