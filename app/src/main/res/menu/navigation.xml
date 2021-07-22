@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_popular"
+        android:icon="@drawable/ic_baseline_star_24"
+        android:title="@string/title_popular" />
+
+    <item
+        android:id="@+id/navigation_top_rated"
+        android:icon="@drawable/ic_baseline_wine_bar_24"
+        android:title="@string/title_top_rated" />
+
+</menu>
